@@ -3,7 +3,7 @@ import ServiceManagement
 import UserNotifications
 
 struct SettingsView: View {
-    @Binding var isPresented: Bool
+    @Binding var mode: ContentViewMode
     @AppStorage("soundAlertsEnabled") private var soundAlertsEnabled = true
     @AppStorage("launchAtLogin") private var launchAtLogin = false
 
@@ -13,12 +13,16 @@ struct SettingsView: View {
         VStack(spacing: 0) {
             // Header
             HStack {
+                Button {
+                    mode = .main
+                } label: {
+                    Image(systemName: "chevron.left")
+                }
+                .buttonStyle(.plain)
+
                 Text("Settings")
                     .font(.headline)
                 Spacer()
-                Button("Done") {
-                    isPresented = false
-                }
             }
             .padding()
 
@@ -63,7 +67,6 @@ struct SettingsView: View {
             }
             .formStyle(.grouped)
         }
-        .frame(width: 320, height: 350)
         .onAppear {
             checkNotificationStatus()
         }
@@ -77,7 +80,9 @@ struct SettingsView: View {
                 .foregroundColor(.green)
                 .font(.caption)
         case .denied:
-            Button(action: openNotificationSettings) {
+            Button {
+                openNotificationSettings()
+            } label: {
                 Label("Disabled - Enable", systemImage: "exclamationmark.triangle.fill")
                     .foregroundColor(.orange)
                     .font(.caption)
@@ -126,12 +131,11 @@ struct SettingsView: View {
             }
         } catch {
             print("Failed to update launch at login: \(error)")
-            // Note: Cannot revert toggle from here due to @AppStorage limitations
-            // User will need to toggle again if registration fails
         }
     }
 }
 
 #Preview {
-    SettingsView(isPresented: .constant(true))
+    SettingsView(mode: .constant(.settings))
+        .frame(width: 350, height: 450)
 }

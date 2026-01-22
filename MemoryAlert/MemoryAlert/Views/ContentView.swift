@@ -1,9 +1,39 @@
 import SwiftUI
 
+enum ContentViewMode {
+    case main
+    case processPicker
+    case settings
+    case thresholdConfig(MonitoredProcess)
+}
+
 struct ContentView: View {
     @EnvironmentObject var processMonitor: ProcessMonitor
-    @State private var showingProcessPicker = false
-    @State private var showingSettings = false
+    @State private var mode: ContentViewMode = .main
+
+    var body: some View {
+        Group {
+            switch mode {
+            case .main:
+                MainView(mode: $mode)
+                    .environmentObject(processMonitor)
+            case .processPicker:
+                ProcessPickerView(mode: $mode)
+                    .environmentObject(processMonitor)
+            case .settings:
+                SettingsView(mode: $mode)
+            case .thresholdConfig(let process):
+                ThresholdConfigView(process: process, mode: $mode)
+                    .environmentObject(processMonitor)
+            }
+        }
+        .frame(width: 350, height: 450)
+    }
+}
+
+struct MainView: View {
+    @EnvironmentObject var processMonitor: ProcessMonitor
+    @Binding var mode: ContentViewMode
 
     var body: some View {
         VStack(spacing: 0) {
@@ -12,7 +42,9 @@ struct ContentView: View {
                 Text("Memory Alert")
                     .font(.headline)
                 Spacer()
-                Button(action: { showingSettings = true }) {
+                Button {
+                    mode = .settings
+                } label: {
                     Image(systemName: "gear")
                 }
                 .buttonStyle(.plain)
@@ -22,7 +54,9 @@ struct ContentView: View {
             Divider()
 
             // Add Process Button
-            Button(action: { showingProcessPicker = true }) {
+            Button {
+                mode = .processPicker
+            } label: {
                 HStack {
                     Image(systemName: "plus.circle.fill")
                     Text("Add Process")
@@ -52,7 +86,7 @@ struct ContentView: View {
                 ScrollView {
                     LazyVStack(spacing: 0) {
                         ForEach(processMonitor.monitoredProcesses) { process in
-                            ProcessRowView(process: process)
+                            ProcessRowView(process: process, mode: $mode)
                             Divider()
                         }
                     }
@@ -62,19 +96,14 @@ struct ContentView: View {
             Divider()
 
             // Quit Button
-            Button(action: { NSApplication.shared.terminate(nil) }) {
+            Button {
+                NSApplication.shared.terminate(nil)
+            } label: {
                 Text("Quit")
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
             .buttonStyle(.plain)
             .padding()
-        }
-        .sheet(isPresented: $showingProcessPicker) {
-            ProcessPickerView(isPresented: $showingProcessPicker)
-                .environmentObject(processMonitor)
-        }
-        .sheet(isPresented: $showingSettings) {
-            SettingsView(isPresented: $showingSettings)
         }
     }
 }

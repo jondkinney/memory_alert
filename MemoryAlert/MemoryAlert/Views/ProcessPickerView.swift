@@ -3,7 +3,7 @@ import AppKit
 
 struct ProcessPickerView: View {
     @EnvironmentObject var processMonitor: ProcessMonitor
-    @Binding var isPresented: Bool
+    @Binding var mode: ContentViewMode
     @State private var searchText = ""
     @State private var runningApps: [RunningAppInfo] = []
 
@@ -20,12 +20,16 @@ struct ProcessPickerView: View {
         VStack(spacing: 0) {
             // Header
             HStack {
+                Button {
+                    mode = .main
+                } label: {
+                    Image(systemName: "chevron.left")
+                }
+                .buttonStyle(.plain)
+
                 Text("Select Process")
                     .font(.headline)
                 Spacer()
-                Button("Cancel") {
-                    isPresented = false
-                }
             }
             .padding()
 
@@ -38,7 +42,9 @@ struct ProcessPickerView: View {
                 TextField("Search apps...", text: $searchText)
                     .textFieldStyle(.plain)
                 if !searchText.isEmpty {
-                    Button(action: { searchText = "" }) {
+                    Button {
+                        searchText = ""
+                    } label: {
                         Image(systemName: "xmark.circle.fill")
                             .foregroundColor(.secondary)
                     }
@@ -72,7 +78,6 @@ struct ProcessPickerView: View {
                 }
             }
         }
-        .frame(width: 350, height: 400)
         .onAppear {
             refreshAppList()
         }
@@ -95,7 +100,7 @@ struct ProcessPickerView: View {
             icon: app.icon
         )
         processMonitor.addProcess(process)
-        isPresented = false
+        mode = .main
     }
 }
 
@@ -104,7 +109,9 @@ struct AppRowView: View {
     let onSelect: () -> Void
 
     var body: some View {
-        Button(action: onSelect) {
+        Button {
+            onSelect()
+        } label: {
             HStack(spacing: 12) {
                 if let icon = app.icon {
                     Image(nsImage: icon)
@@ -138,6 +145,7 @@ struct AppRowView: View {
 }
 
 #Preview {
-    ProcessPickerView(isPresented: .constant(true))
+    ProcessPickerView(mode: .constant(.processPicker))
         .environmentObject(ProcessMonitor())
+        .frame(width: 350, height: 450)
 }

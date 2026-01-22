@@ -3,14 +3,14 @@ import SwiftUI
 struct ThresholdConfigView: View {
     @EnvironmentObject var processMonitor: ProcessMonitor
     let process: MonitoredProcess
-    @Binding var isPresented: Bool
+    @Binding var mode: ContentViewMode
 
     @State private var thresholds: [Int]
     @State private var newThreshold: String = ""
 
-    init(process: MonitoredProcess, isPresented: Binding<Bool>) {
+    init(process: MonitoredProcess, mode: Binding<ContentViewMode>) {
         self.process = process
-        self._isPresented = isPresented
+        self._mode = mode
         self._thresholds = State(initialValue: process.thresholds.sorted())
     }
 
@@ -18,12 +18,16 @@ struct ThresholdConfigView: View {
         VStack(spacing: 0) {
             // Header
             HStack {
+                Button {
+                    saveAndClose()
+                } label: {
+                    Image(systemName: "chevron.left")
+                }
+                .buttonStyle(.plain)
+
                 Text("Configure Thresholds")
                     .font(.headline)
                 Spacer()
-                Button("Done") {
-                    saveAndClose()
-                }
             }
             .padding()
 
@@ -54,7 +58,9 @@ struct ThresholdConfigView: View {
                     HStack {
                         Text("\(threshold) GB")
                         Spacer()
-                        Button(action: { removeThreshold(threshold) }) {
+                        Button {
+                            removeThreshold(threshold)
+                        } label: {
                             Image(systemName: "minus.circle.fill")
                                 .foregroundColor(.red)
                         }
@@ -73,7 +79,9 @@ struct ThresholdConfigView: View {
                             .onSubmit {
                                 addThreshold()
                             }
-                        Button(action: addThreshold) {
+                        Button {
+                            addThreshold()
+                        } label: {
                             Image(systemName: "plus.circle.fill")
                                 .foregroundColor(.green)
                         }
@@ -111,7 +119,6 @@ struct ThresholdConfigView: View {
             }
             .padding()
         }
-        .frame(width: 300, height: 350)
     }
 
     private var isValidThreshold: Bool {
@@ -135,6 +142,6 @@ struct ThresholdConfigView: View {
 
     private func saveAndClose() {
         processMonitor.updateThresholds(for: process, thresholds: thresholds)
-        isPresented = false
+        mode = .main
     }
 }

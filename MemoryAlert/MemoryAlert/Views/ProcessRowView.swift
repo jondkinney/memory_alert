@@ -3,7 +3,7 @@ import SwiftUI
 struct ProcessRowView: View {
     @EnvironmentObject var processMonitor: ProcessMonitor
     let process: MonitoredProcess
-    @State private var showingThresholdConfig = false
+    @Binding var mode: ContentViewMode
 
     private var statusColor: Color {
         if !process.isRunning {
@@ -71,13 +71,17 @@ struct ProcessRowView: View {
 
             // Actions
             VStack(spacing: 4) {
-                Button(action: { showingThresholdConfig = true }) {
+                Button {
+                    mode = .thresholdConfig(process)
+                } label: {
                     Image(systemName: "slider.horizontal.3")
                 }
                 .buttonStyle(.plain)
                 .help("Configure thresholds")
 
-                Button(action: { processMonitor.removeProcess(process) }) {
+                Button {
+                    processMonitor.removeProcess(process)
+                } label: {
                     Image(systemName: "xmark.circle")
                         .foregroundColor(.red)
                 }
@@ -87,9 +91,5 @@ struct ProcessRowView: View {
         }
         .padding()
         .background(process.breachedThresholds.isEmpty ? Color.clear : Color.red.opacity(0.1))
-        .sheet(isPresented: $showingThresholdConfig) {
-            ThresholdConfigView(process: process, isPresented: $showingThresholdConfig)
-                .environmentObject(processMonitor)
-        }
     }
 }
