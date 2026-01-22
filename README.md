@@ -21,7 +21,7 @@ A lightweight macOS menu bar app that monitors process memory usage and alerts y
 
 ### Download
 
-Download the latest release from the [Releases page](https://github.com/jondkinney/soundsource_monitor/releases).
+Download the latest release from the [Releases page](https://github.com/jondkinney/memory_alert/releases).
 
 1. Download `MemoryAlert.zip`
 2. Unzip and drag `MemoryAlert.app` to your Applications folder
@@ -34,8 +34,8 @@ Requirements:
 - Xcode 15.0 or later
 
 ```bash
-git clone https://github.com/jondkinney/soundsource_monitor.git
-cd soundsource_monitor/MemoryAlert
+git clone https://github.com/jondkinney/memory_alert.git
+cd memory_alert/MemoryAlert
 xcodebuild -scheme MemoryAlert -configuration Release build
 ```
 
