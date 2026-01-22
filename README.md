@@ -10,7 +10,7 @@ A lightweight macOS menu bar app that monitors process memory usage and alerts y
 
 - **Menu bar app** — Lives in your menu bar, no Dock icon
 - **Monitor multiple processes** — Track memory usage for any running GUI or menu bar app
-- **Configurable thresholds** — Set custom alerts at any GB level (e.g., 5GB, 10GB, 15GB)
+- **Configurable thresholds** — Set alerts in GB or MB (e.g., 5GB, 500MB)
 - **Multiple alert types** — macOS notifications + optional sound alerts
 - **Visual indicators** — Status colors show which processes are over threshold
 - **Preset configurations** — Quick threshold presets for common use cases
@@ -50,15 +50,17 @@ The built app will be in `~/Library/Developer/Xcode/DerivedData/MemoryAlert-*/Bu
 
 ### Configuring Thresholds
 
-1. Click the slider icon next to any monitored process
-2. Add or remove threshold values (in GB)
-3. Use presets for quick configuration
+1. Click the configure icon (three horizontal lines) next to any monitored process
+2. Add thresholds in GB (e.g., `5` or `5GB`) or MB (e.g., `500MB`)
+3. Use presets for quick configuration: 5/10/15 GB, 2/4/8 GB, or 500MB/1GB
 
 ### Settings
 
 - **Play sound on threshold breach** — Enable/disable audio alerts
 - **Launch at login** — Start MemoryAlert automatically when you log in
 - **Notifications** — Shows notification permission status with easy access to System Settings
+
+**Tip:** For persistent notifications that stay until dismissed, go to System Settings > Notifications > MemoryAlert and set the style to "Alerts".
 
 ## Technical Details
 
