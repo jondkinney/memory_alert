@@ -5,13 +5,13 @@ struct ThresholdConfigView: View {
     let process: MonitoredProcess
     @Binding var mode: ContentViewMode
 
-    @State private var thresholds: [Int]
+    @State private var thresholdsMB: [Int]
     @State private var newThreshold: String = ""
 
     init(process: MonitoredProcess, mode: Binding<ContentViewMode>) {
         self.process = process
         self._mode = mode
-        self._thresholds = State(initialValue: process.thresholds.sorted())
+        self._thresholdsMB = State(initialValue: process.thresholdsMB.sorted())
     }
 
     var body: some View {
@@ -50,13 +50,13 @@ struct ThresholdConfigView: View {
 
             // Thresholds list
             VStack(alignment: .leading, spacing: 8) {
-                Text("Memory Thresholds (GB)")
+                Text("Memory Thresholds")
                     .font(.caption)
                     .foregroundColor(.secondary)
 
-                ForEach(thresholds, id: \.self) { threshold in
+                ForEach(thresholdsMB, id: \.self) { threshold in
                     HStack {
-                        Text("\(threshold) GB")
+                        Text(MonitoredProcess.formatThreshold(threshold))
                         Spacer()
                         Button {
                             removeThreshold(threshold)
@@ -65,17 +65,17 @@ struct ThresholdConfigView: View {
                                 .foregroundColor(.red)
                         }
                         .buttonStyle(.plain)
-                        .disabled(thresholds.count <= 1)
+                        .disabled(thresholdsMB.count <= 1)
                     }
                     .padding(.vertical, 4)
                 }
 
                 // Add new threshold
-                if thresholds.count < 5 {
+                if thresholdsMB.count < 5 {
                     HStack {
-                        TextField("Add threshold (GB)", text: $newThreshold)
+                        TextField("e.g. 5GB, 500MB", text: $newThreshold)
                             .textFieldStyle(.roundedBorder)
-                            .frame(width: 120)
+                            .frame(width: 140)
                             .onSubmit {
                                 addThreshold()
                             }
@@ -88,6 +88,10 @@ struct ThresholdConfigView: View {
                         .buttonStyle(.plain)
                         .disabled(!isValidThreshold)
                     }
+
+                    Text("Enter as GB (e.g. 5) or MB (e.g. 500MB)")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
                 } else {
                     Text("Maximum 5 thresholds")
                         .font(.caption)
@@ -104,16 +108,16 @@ struct ThresholdConfigView: View {
                 Text("Presets:")
                     .font(.caption)
                     .foregroundColor(.secondary)
-                Button("5, 10, 15") {
-                    thresholds = [5, 10, 15]
+                Button("5, 10, 15 GB") {
+                    thresholdsMB = [5120, 10240, 15360]
                 }
                 .buttonStyle(.bordered)
-                Button("2, 4, 8") {
-                    thresholds = [2, 4, 8]
+                Button("2, 4, 8 GB") {
+                    thresholdsMB = [2048, 4096, 8192]
                 }
                 .buttonStyle(.bordered)
-                Button("10, 20") {
-                    thresholds = [10, 20]
+                Button("500MB, 1GB") {
+                    thresholdsMB = [500, 1024]
                 }
                 .buttonStyle(.bordered)
             }
@@ -122,26 +126,26 @@ struct ThresholdConfigView: View {
     }
 
     private var isValidThreshold: Bool {
-        guard let value = Int(newThreshold), value > 0, value <= 100 else {
+        guard let valueMB = MonitoredProcess.parseThreshold(newThreshold) else {
             return false
         }
-        return !thresholds.contains(value)
+        return !thresholdsMB.contains(valueMB)
     }
 
     private func addThreshold() {
-        guard let value = Int(newThreshold), value > 0, value <= 100 else { return }
-        guard !thresholds.contains(value) else { return }
-        thresholds.append(value)
-        thresholds.sort()
+        guard let valueMB = MonitoredProcess.parseThreshold(newThreshold) else { return }
+        guard !thresholdsMB.contains(valueMB) else { return }
+        thresholdsMB.append(valueMB)
+        thresholdsMB.sort()
         newThreshold = ""
     }
 
     private func removeThreshold(_ threshold: Int) {
-        thresholds.removeAll { $0 == threshold }
+        thresholdsMB.removeAll { $0 == threshold }
     }
 
     private func saveAndClose() {
-        processMonitor.updateThresholds(for: process, thresholds: thresholds)
+        processMonitor.updateThresholds(for: process, thresholdsMB: thresholdsMB)
         mode = .main
     }
 }

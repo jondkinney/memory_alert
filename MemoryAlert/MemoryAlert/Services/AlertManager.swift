@@ -19,12 +19,25 @@ class AlertManager {
     }
 
     /// Send a memory alert notification
-    func sendMemoryAlert(processName: String, currentMemoryGB: Double, thresholdGB: Int) {
+    func sendMemoryAlert(processName: String, currentMemoryMB: Double, thresholdMB: Int) {
         let content = UNMutableNotificationContent()
         content.title = "Memory Alert"
-        content.body = "\(processName) is using \(String(format: "%.1f", currentMemoryGB)) GB (over \(thresholdGB) GB threshold)"
+
+        // Format current memory
+        let currentFormatted: String
+        if currentMemoryMB >= 1024 {
+            currentFormatted = String(format: "%.1f GB", currentMemoryMB / 1024)
+        } else {
+            currentFormatted = String(format: "%.0f MB", currentMemoryMB)
+        }
+
+        // Format threshold
+        let thresholdFormatted = MonitoredProcess.formatThreshold(thresholdMB)
+
+        content.body = "\(processName) is using \(currentFormatted) (over \(thresholdFormatted) threshold)"
         content.sound = soundAlertsEnabled ? .default : nil
         content.categoryIdentifier = "MEMORY_ALERT"
+        content.interruptionLevel = .timeSensitive
 
         let request = UNNotificationRequest(
             identifier: UUID().uuidString,

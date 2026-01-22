@@ -56,9 +56,9 @@ class ProcessMonitor: ObservableObject {
         updateWarningState()
     }
 
-    func updateThresholds(for process: MonitoredProcess, thresholds: [Int]) {
+    func updateThresholds(for process: MonitoredProcess, thresholdsMB: [Int]) {
         guard let index = monitoredProcesses.firstIndex(where: { $0.id == process.id }) else { return }
-        monitoredProcesses[index].thresholds = thresholds
+        monitoredProcesses[index].thresholdsMB = thresholdsMB
         monitoredProcesses[index].notifiedThresholds = []  // Reset notifications for new thresholds
         saveProcesses()
         updateWarningState()
@@ -131,26 +131,26 @@ class ProcessMonitor: ObservableObject {
     }
 
     private func checkThresholds(for process: inout MonitoredProcess, previousMemory: UInt64) {
-        let memoryGB = Double(process.currentMemoryBytes) / 1_073_741_824
-        let previousGB = Double(previousMemory) / 1_073_741_824
+        let memoryMB = Double(process.currentMemoryBytes) / 1_048_576
+        let previousMB = Double(previousMemory) / 1_048_576
 
-        for threshold in process.thresholds {
-            let thresholdDouble = Double(threshold)
+        for thresholdMB in process.thresholdsMB {
+            let thresholdDouble = Double(thresholdMB)
 
-            if memoryGB >= thresholdDouble {
+            if memoryMB >= thresholdDouble {
                 // Currently over threshold
-                if !process.notifiedThresholds.contains(threshold) {
+                if !process.notifiedThresholds.contains(thresholdMB) {
                     // First time exceeding this threshold - alert!
-                    process.notifiedThresholds.insert(threshold)
+                    process.notifiedThresholds.insert(thresholdMB)
                     AlertManager.shared.sendMemoryAlert(
                         processName: process.processName,
-                        currentMemoryGB: memoryGB,
-                        thresholdGB: threshold
+                        currentMemoryMB: memoryMB,
+                        thresholdMB: thresholdMB
                     )
                 }
-            } else if previousGB >= thresholdDouble && memoryGB < thresholdDouble {
+            } else if previousMB >= thresholdDouble && memoryMB < thresholdDouble {
                 // Memory dropped below threshold - reset notification state
-                process.notifiedThresholds.remove(threshold)
+                process.notifiedThresholds.remove(thresholdMB)
             }
         }
     }

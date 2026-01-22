@@ -20,7 +20,7 @@ struct ProcessRowView: View {
     }
 
     private var formattedThresholds: String {
-        process.thresholds.sorted().map { "\($0)GB" }.joined(separator: ", ")
+        process.thresholdsMB.sorted().map { MonitoredProcess.formatThreshold($0) }.joined(separator: ", ")
     }
 
     var body: some View {
@@ -55,9 +55,11 @@ struct ProcessRowView: View {
                             .foregroundColor(.secondary)
 
                         if !process.breachedThresholds.isEmpty {
-                            Text("Over \(process.breachedThresholds.min() ?? 0)GB")
-                                .font(.caption)
-                                .foregroundColor(.red)
+                            if let minBreached = process.breachedThresholds.min() {
+                                Text("Over \(MonitoredProcess.formatThreshold(minBreached))")
+                                    .font(.caption)
+                                    .foregroundColor(.red)
+                            }
                         }
                     }
                 }

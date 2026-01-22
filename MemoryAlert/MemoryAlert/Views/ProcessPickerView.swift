@@ -96,7 +96,7 @@ struct ProcessPickerView: View {
             processName: app.localizedName,
             bundleIdentifier: app.bundleIdentifier,
             currentPID: app.pid,
-            thresholds: [5, 10, 15], // Default thresholds
+            thresholdsMB: [5120, 10240, 15360], // Default: 5GB, 10GB, 15GB in MB
             icon: app.icon
         )
         processMonitor.addProcess(process)
