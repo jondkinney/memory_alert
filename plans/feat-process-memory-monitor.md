@@ -103,12 +103,12 @@ A simple, native menu bar utility would provide passive monitoring with proactiv
 
 **Goal:** Basic app structure with menu bar presence
 
-- [ ] Create Xcode project (macOS App, SwiftUI lifecycle)
-- [ ] Configure as agent app (LSUIElement = YES, no Dock icon)
-- [ ] Implement MenuBarExtra with `.window` style
-- [ ] Add basic ContentView with placeholder UI
-- [ ] Add Quit button functionality
-- [ ] Test menu bar appearance and basic interaction
+- [x] Create Xcode project (macOS App, SwiftUI lifecycle)
+- [x] Configure as agent app (LSUIElement = YES, no Dock icon)
+- [x] Implement MenuBarExtra with `.window` style
+- [x] Add basic ContentView with placeholder UI
+- [x] Add Quit button functionality
+- [x] Test menu bar appearance and basic interaction
 
 **Files:**
 - `SoundSourceMonitorApp.swift` - App entry point with MenuBarExtra
@@ -119,13 +119,13 @@ A simple, native menu bar utility would provide passive monitoring with proactiv
 
 **Goal:** Display list of running GUI applications (same as Force Quit menu)
 
-- [ ] Implement `ProcessLister` service using `NSRunningApplication`
-- [ ] Filter to `activationPolicy == .regular` (GUI apps with Dock presence)
-- [ ] Create `ProcessInfo` model (pid, bundleIdentifier, localizedName, icon)
-- [ ] Build `ProcessPickerView` with searchable list
-- [ ] Show app icon + localized name (no duplicates since each app has unique bundle ID)
-- [ ] Add search/filter functionality
-- [ ] Refresh process list on dropdown open
+- [x] Implement `ProcessLister` service using `NSRunningApplication`
+- [x] Filter to `activationPolicy == .regular` (GUI apps with Dock presence)
+- [x] Create `ProcessInfo` model (pid, bundleIdentifier, localizedName, icon)
+- [x] Build `ProcessPickerView` with searchable list
+- [x] Show app icon + localized name (no duplicates since each app has unique bundle ID)
+- [x] Add search/filter functionality
+- [x] Refresh process list on dropdown open
 
 **Files:**
 - `Services/ProcessLister.swift` - Process enumeration via NSRunningApplication
@@ -138,13 +138,13 @@ A simple, native menu bar utility would provide passive monitoring with proactiv
 
 **Goal:** Monitor memory usage of selected processes
 
-- [ ] Implement `ProcessMonitor` ObservableObject
-- [ ] Use `proc_pid_rusage()` for memory footprint
-- [ ] Create `MonitoredProcess` model with thresholds
-- [ ] Implement polling loop with Combine Timer
-- [ ] Display current memory usage in UI
-- [ ] Handle process termination gracefully
-- [ ] Auto-reattach when process restarts (by name)
+- [x] Implement `ProcessMonitor` ObservableObject
+- [x] Use `proc_pid_rusage()` for memory footprint
+- [x] Create `MonitoredProcess` model with thresholds
+- [x] Implement polling loop with Combine Timer
+- [x] Display current memory usage in UI
+- [x] Handle process termination gracefully
+- [x] Auto-reattach when process restarts (by name)
 
 **Files:**
 - `Services/ProcessMonitor.swift` - Memory monitoring service
@@ -154,12 +154,12 @@ A simple, native menu bar utility would provide passive monitoring with proactiv
 
 **Goal:** Allow users to configure memory thresholds
 
-- [ ] Build `ThresholdConfigView` for adding/editing thresholds
-- [ ] Support thresholds in GB (e.g., 1, 2, 5, 10, 15, 20)
-- [ ] Validate threshold values (positive, non-duplicate)
-- [ ] Allow up to 5 thresholds per process
-- [ ] Default thresholds: 5GB, 10GB, 15GB
-- [ ] Store threshold configuration with process
+- [x] Build `ThresholdConfigView` for adding/editing thresholds
+- [x] Support thresholds in GB (e.g., 1, 2, 5, 10, 15, 20)
+- [x] Validate threshold values (positive, non-duplicate)
+- [x] Allow up to 5 thresholds per process
+- [x] Default thresholds: 5GB, 10GB, 15GB
+- [x] Store threshold configuration with process
 
 **Files:**
 - `Views/ThresholdConfigView.swift` - Threshold editing UI
@@ -169,13 +169,13 @@ A simple, native menu bar utility would provide passive monitoring with proactiv
 
 **Goal:** Notify users when thresholds are exceeded
 
-- [ ] Implement `AlertManager` service
-- [ ] Request notification permission on first launch
-- [ ] Send notification when threshold breached
-- [ ] Track notified thresholds (don't re-alert until cleared)
-- [ ] Clear notification state when memory drops below threshold
-- [ ] Add optional alert sound (using system sounds)
-- [ ] Add settings for sound on/off
+- [x] Implement `AlertManager` service
+- [x] Request notification permission on first launch
+- [x] Send notification when threshold breached
+- [x] Track notified thresholds (don't re-alert until cleared)
+- [x] Clear notification state when memory drops below threshold
+- [x] Add optional alert sound (using system sounds)
+- [x] Add settings for sound on/off
 
 **Files:**
 - `Services/AlertManager.swift` - Notification handling
@@ -185,11 +185,11 @@ A simple, native menu bar utility would provide passive monitoring with proactiv
 
 **Goal:** Show breach status at a glance
 
-- [ ] Update menu bar icon based on state:
+- [x] Update menu bar icon based on state:
   - Normal: `memorychip` (SF Symbol)
   - Warning: `exclamationmark.triangle.fill`
-- [ ] Show badge or color change when thresholds breached
-- [ ] Highlight breached processes in list view
+- [x] Show badge or color change when thresholds breached
+- [x] Highlight breached processes in list view
 - [ ] Show breach count in menu bar (optional)
 
 **Files:**
@@ -199,12 +199,12 @@ A simple, native menu bar utility would provide passive monitoring with proactiv
 
 **Goal:** Save settings across app restarts
 
-- [ ] Implement Codable for `MonitoredProcess` and thresholds
-- [ ] Use @AppStorage for monitored processes list
-- [ ] Add settings view with:
+- [x] Implement Codable for `MonitoredProcess` and thresholds
+- [x] Use @AppStorage for monitored processes list
+- [x] Add settings view with:
   - Sound alerts toggle
   - Launch at Login toggle
-- [ ] Implement Launch at Login using SMAppService (macOS 13+)
+- [x] Implement Launch at Login using SMAppService (macOS 13+)
 
 **Note:** Polling interval is hardcoded at 5 seconds. This is a sensible default that balances responsiveness with resource usage - no user configuration needed.
 
@@ -216,9 +216,9 @@ A simple, native menu bar utility would provide passive monitoring with proactiv
 
 **Goal:** Handle edge cases and improve UX
 
-- [ ] Handle notification permission denied (show UI indicator)
-- [ ] Handle process read failures gracefully (see Error Handling below)
-- [ ] Add empty state for no monitored processes
+- [x] Handle notification permission denied (show UI indicator)
+- [x] Handle process read failures gracefully (see Error Handling below)
+- [x] Add empty state for no monitored processes
 - [ ] Add first-run onboarding/guidance
 - [ ] Test with various process types
 - [ ] Test memory/CPU usage of the app itself
